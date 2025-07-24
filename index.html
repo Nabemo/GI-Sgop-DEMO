@@ -9,7 +9,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #111;
+            background-color: #000000;
             color: #fff;
             font-family: Arial, sans-serif;
             overflow: hidden;
@@ -63,14 +63,15 @@
         
         .emoji {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
             animation: float 5s infinite ease-in-out;
             z-index: 1;
-            opacity: 0.85;
+            opacity: 0.9;
             transition: all 0.4s ease;
+            image-rendering: -webkit-optimize-contrast;
         }
         
         @keyframes glow {
@@ -84,8 +85,8 @@
         }
         
         .emoji:hover {
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
             opacity: 1;
         }
     </style>
@@ -93,77 +94,103 @@
 <body>
     <div class="banner">
         <div class="banner-text">GI-Shop</div>
-        <a href="https://t.me/gishop_Stars" class="tg-button" target="_blank">Перейти в канал</a>
+        <a href="https://t.me/GishopLbot" class="tg-button" target="_blank">Перейти в канал</a>
     </div>
     
     <script>
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
         
-        // Коллекция возможных эмодзи
-        const emojiList = [
-            "Money%20Bag.webp", // 💰
-            "Gem%20Stone.webp", // 💎
-            "Crystal%20Ball.webp", // 🔮
-            "Mobile%20Phone.webp", // 📱
-            "Slot%20Machine.webp", // 🎰
-            "Laptop.webp", // 💻
-            "Credit%20Card.webp", // 💳
-            "Ring.webp", // 💍
-            "Shopping%20Bags.webp", // 🛍️
-            "Diamond.webp", // 🔶
-            "Fire.webp", // 🔥
-            "Comet.webp" // ☄️
+        // Проверенные эмодзи (гарантированно без надписей)
+        const emojiData = [
+            { 
+                url: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Gem%20Stone.webp",
+                name: "Алмаз"
+            },
+            { 
+                url: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Mobile%20Phone.webp",
+                name: "Телефон"
+            },
+            { 
+                url: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Laptop.webp",
+                name: "Ноутбук"
+            },
+            { 
+                url: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Money%20Bag.webp",
+                name: "Мешок с деньгами"
+            },
+            { 
+                url: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Credit%20Card.webp",
+                name: "Кредитная карта"
+            },
+            { 
+                url: "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Ring.webp",
+                name: "Кольцо"
+            }
         ];
         
-        function getRandomEmoji() {
-            const randomIndex = Math.floor(Math.random() * emojiList.length);
-            return `https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/${emojiList[randomIndex]}`;
-        }
-        
-        function getRandomPosition() {
-            return {
-                x: Math.random() * 80 + 10, // 10-90%
-                y: Math.random() * 80 + 10  // 10-90%
-            };
-        }
-        
-        function getRandomSize() {
-            return 50 + Math.random() * 30; // 50-80px
-        }
-        
-        function getRandomAnimation() {
-            return 4 + Math.random() * 3; // 4-7s
-        }
-        
-        function createRandomEmojis() {
-            const container = document.body;
+        function positionEmojis() {
+            const existingEmojis = document.querySelectorAll('.emoji');
+            existingEmojis.forEach(emoji => emoji.remove());
             
-            // Создаем 6 случайных эмодзи
-            for (let i = 0; i < 6; i++) {
-                const emoji = document.createElement('img');
-                emoji.className = 'emoji';
-                emoji.src = getRandomEmoji();
-                emoji.alt = 'Emoji';
-                
-                const pos = getRandomPosition();
-                const size = getRandomSize();
-                const duration = getRandomAnimation();
-                const brightness = 60 + Math.random() * 25; // 60-85%
-                
-                emoji.style.left = `${pos.x}%`;
-                emoji.style.top = `${pos.y}%`;
-                emoji.style.width = `${size}px`;
-                emoji.style.height = `${size}px`;
-                emoji.style.animationDuration = `${duration}s`;
-                emoji.style.filter = `drop-shadow(0 0 8px rgba(255, 255, 255, ${brightness/100})) brightness(${brightness}%)`;
-                emoji.style.animationDelay = `${Math.random() * 2}s`;
-                
-                container.appendChild(emoji);
-            }
+            const positions = [];
+            const minDistance = 120;
+            
+            emojiData.forEach((emoji, index) => {
+                const img = new Image();
+                img.onload = function() {
+                    const element = document.createElement('img');
+                    element.className = 'emoji';
+                    element.src = emoji.url;
+                    element.alt = emoji.name;
+                    
+                    let x, y;
+                    let attempts = 0;
+                    const maxAttempts = 100;
+                    let positionFound = false;
+                    
+                    do {
+                        x = Math.random() * 80 + 10;
+                        y = Math.random() * 80 + 10;
+                        attempts++;
+                        
+                        positionFound = positions.every(pos => {
+                            const distance = Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2));
+                            return distance > minDistance;
+                        });
+                        
+                        if (attempts > maxAttempts) {
+                            x = 10 + index * 15;
+                            y = 20 + index * 12;
+                            break;
+                        }
+                    } while (!positionFound && attempts <= maxAttempts);
+                    
+                    positions.push({x, y});
+                    
+                    const size = 70 + Math.random() * 30;
+                    const duration = 4 + Math.random() * 3;
+                    const brightness = 70 + Math.random() * 20;
+                    const delay = Math.random() * 2;
+                    
+                    element.style.left = `${x}%`;
+                    element.style.top = `${y}%`;
+                    element.style.width = `${size}px`;
+                    element.style.height = `${size}px`;
+                    element.style.animationDuration = `${duration}s`;
+                    element.style.filter = `drop-shadow(0 0 8px rgba(255, 255, 255, ${brightness/100})) brightness(${brightness}%)`;
+                    element.style.animationDelay = `${delay}s`;
+                    
+                    document.body.appendChild(element);
+                };
+                img.onerror = function() {
+                    console.error("Failed to load emoji:", emoji.url);
+                };
+                img.src = emoji.url;
+            });
         }
         
-        document.addEventListener('DOMContentLoaded', createRandomEmojis);
+        document.addEventListener('DOMContentLoaded', positionEmojis);
     </script>
 </body>
 </html>
