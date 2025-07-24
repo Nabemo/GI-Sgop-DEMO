@@ -9,11 +9,12 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #000;
+            background-color: #111;
             color: #fff;
             font-family: Arial, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
             min-height: 100vh;
+            position: relative;
         }
         
         .banner {
@@ -24,96 +25,68 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            overflow: hidden;
-            text-align: center;
+            z-index: 2;
         }
         
         .banner-text {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
-            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
             animation: glow 2s infinite alternate;
-            z-index: 2;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
         }
         
         .tg-button {
             display: inline-block;
-            margin-top: 30px;
-            padding: 12px 24px;
+            padding: 14px 28px;
             background: linear-gradient(135deg, #0088cc, #00aced);
             color: white;
             text-decoration: none;
-            border-radius: 25px;
+            border-radius: 30px;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 172, 237, 0.3);
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 172, 237, 0.4);
             transition: all 0.3s ease;
+            z-index: 10;
             border: none;
             cursor: pointer;
-            z-index: 5;
         }
         
         .tg-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 172, 237, 0.4);
-        }
-        
-        .content {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            padding: 2rem 0;
-            position: relative;
-            background-color: #000;
-        }
-        
-        .blur-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(5px);
-            background-color: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            z-index: 3;
-        }
-        
-        .emoji-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            z-index: 4;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.5s ease;
+            box-shadow: 0 6px 20px rgba(0, 172, 237, 0.6);
         }
         
         .emoji {
-            width: 80px;
-            height: 80px;
+            position: absolute;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+            animation: float 5s infinite ease-in-out;
+            z-index: 1;
+            opacity: 0.85;
+            transition: all 0.4s ease;
         }
         
         @keyframes glow {
-            from {
-                text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
-            }
-            to {
-                text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff, 0 0 35px #00ffff, 0 0 45px #00ffff;
-            }
+            0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+            100% { text-shadow: 0 0 12px rgba(255, 255, 255, 0.8); }
         }
         
-        .visible {
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        
+        .emoji:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
             opacity: 1;
-            transform: translateY(0);
         }
     </style>
 </head>
@@ -123,44 +96,74 @@
         <a href="https://t.me/gishop_Stars" class="tg-button" target="_blank">Перейти в канал</a>
     </div>
     
-    <div class="content">
-        <div class="blur-overlay" id="blurOverlay"></div>
-        <div class="emoji-container" id="emojiContainer">
-            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Television.webp" alt="Television" class="emoji">
-            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Mobile%20Phone.webp" alt="Mobile Phone" class="emoji">
-            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Television.webp" alt="Television" class="emoji">
-        </div>
-    </div>
-    
     <script>
-        // Инициализация Telegram WebApp
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
         
-        // Элементы для анимации
-        const blurOverlay = document.getElementById('blurOverlay');
-        const emojiContainer = document.getElementById('emojiContainer');
+        // Коллекция возможных эмодзи
+        const emojiList = [
+            "Money%20Bag.webp", // 💰
+            "Gem%20Stone.webp", // 💎
+            "Crystal%20Ball.webp", // 🔮
+            "Mobile%20Phone.webp", // 📱
+            "Slot%20Machine.webp", // 🎰
+            "Laptop.webp", // 💻
+            "Credit%20Card.webp", // 💳
+            "Ring.webp", // 💍
+            "Shopping%20Bags.webp", // 🛍️
+            "Diamond.webp", // 🔶
+            "Fire.webp", // 🔥
+            "Comet.webp" // ☄️
+        ];
         
-        // Анимация при скролле
-        let lastScrollPosition = 0;
+        function getRandomEmoji() {
+            const randomIndex = Math.floor(Math.random() * emojiList.length);
+            return `https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/${emojiList[randomIndex]}`;
+        }
         
-        window.addEventListener('scroll', () => {
-            const currentScrollPosition = window.scrollY;
+        function getRandomPosition() {
+            return {
+                x: Math.random() * 80 + 10, // 10-90%
+                y: Math.random() * 80 + 10  // 10-90%
+            };
+        }
+        
+        function getRandomSize() {
+            return 50 + Math.random() * 30; // 50-80px
+        }
+        
+        function getRandomAnimation() {
+            return 4 + Math.random() * 3; // 4-7s
+        }
+        
+        function createRandomEmojis() {
+            const container = document.body;
             
-            if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 100) {
-                blurOverlay.style.opacity = '1';
-                emojiContainer.classList.add('visible');
-            } else if (currentScrollPosition < lastScrollPosition && currentScrollPosition <= 100) {
-                blurOverlay.style.opacity = '0';
-                emojiContainer.classList.remove('visible');
+            // Создаем 6 случайных эмодзи
+            for (let i = 0; i < 6; i++) {
+                const emoji = document.createElement('img');
+                emoji.className = 'emoji';
+                emoji.src = getRandomEmoji();
+                emoji.alt = 'Emoji';
+                
+                const pos = getRandomPosition();
+                const size = getRandomSize();
+                const duration = getRandomAnimation();
+                const brightness = 60 + Math.random() * 25; // 60-85%
+                
+                emoji.style.left = `${pos.x}%`;
+                emoji.style.top = `${pos.y}%`;
+                emoji.style.width = `${size}px`;
+                emoji.style.height = `${size}px`;
+                emoji.style.animationDuration = `${duration}s`;
+                emoji.style.filter = `drop-shadow(0 0 8px rgba(255, 255, 255, ${brightness/100})) brightness(${brightness}%)`;
+                emoji.style.animationDelay = `${Math.random() * 2}s`;
+                
+                container.appendChild(emoji);
             }
-            
-            lastScrollPosition = currentScrollPosition;
-        });
+        }
         
-        // Инициализация скрытых элементов
-        blurOverlay.style.opacity = '0';
-        emojiContainer.classList.remove('visible');
+        document.addEventListener('DOMContentLoaded', createRandomEmojis);
     </script>
 </body>
 </html>
