@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GORKIY-SHOP</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .banner {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .banner-text {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+            animation: glow 2s infinite alternate;
+            z-index: 2;
+        }
+        
+        .banner-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #000, #111);
+            z-index: 1;
+        }
+        
+        .content {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem 0;
+            position: relative;
+        }
+        
+        .blur-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 3;
+        }
+        
+        .emoji-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            z-index: 4;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .emoji {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+            }
+            to {
+                text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff, 0 0 35px #00ffff, 0 0 45px #00ffff;
+            }
+        }
+        
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="banner-bg"></div>
+        <div class="banner-text">GORKIY-SHOP</div>
+    </div>
+    
+    <div class="content">
+        <div class="blur-overlay" id="blurOverlay"></div>
+        <div class="emoji-container" id="emojiContainer">
+            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Television.webp" alt="Television" class="emoji">
+            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Mobile%20Phone.webp" alt="Mobile Phone" class="emoji">
+            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Television.webp" alt="Television" class="emoji">
+        </div>
+    </div>
+    
+    <script>
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+        
+        const blurOverlay = document.getElementById('blurOverlay');
+        const emojiContainer = document.getElementById('emojiContainer');
+        
+        let lastScrollPosition = 0;
+        
+        window.addEventListener('scroll', () => {
+            const currentScrollPosition = window.scrollY;
+            
+            if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 100) {
+                // Scrolling down
+                blurOverlay.style.opacity = '1';
+                emojiContainer.classList.add('visible');
+            } else if (currentScrollPosition < lastScrollPosition && currentScrollPosition <= 100) {
+                // Scrolling up to top
+                blurOverlay.style.opacity = '0';
+                emojiContainer.classList.remove('visible');
+            }
+            
+            lastScrollPosition = currentScrollPosition;
+        });
+        
+        // Initialize with hidden elements
+        blurOverlay.style.opacity = '0';
+        emojiContainer.classList.remove('visible');
+    </script>
+</body>
+</html>
